@@ -86,6 +86,11 @@ app.post('/', (req, res) => {
                   };
                   arrayResponseJson.push(pdfObject);
                 } else {
+                     /* Printing the extracted data and the text from the pdf. */
+                  // console.log(extractedData[0])
+                  // pdf(pageBuffer).then((data) => {
+                  //   console.log(data.text);
+                  // });
                   console.error("Invalid data extracted from PDF, Skipping...");
                 }
               }
