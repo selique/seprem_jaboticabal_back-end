@@ -27,7 +27,7 @@ const app = express();
 app.use(express.json({ limit: '1000mb' }));
 
 // enable CORS
-app.use(cors());
+app.use(cors({ allowedHeaders: 'Content-Type' }));
 
 app.post('/', (req, res) => {
   upload.single("pdf")(req, res, async (err) => {
