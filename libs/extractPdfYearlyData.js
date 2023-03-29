@@ -6,12 +6,10 @@ const extractCpf = (item) => {
 };
 
 const extractName = (item) => {
-  const extract = item.match(/Nome Completo.*RendimentoAposentadoria/);
+  const extract = item.match(/(?<=CPFNome Completo\d{3}.\d{3}.\d{3}-\d{2}).*?(?=Natureza do Rendimento)/);
+  
   return extract
-    ? extract[0]
-        .replace(/Nome Completo\d{3}.\d{3}.\d{3}-\d{2}/, '')
-        .replace(/Natureza do RendimentoAposentadoria/, '')
-        .toUpperCase()
+    ? extract[0].trim().toUpperCase()
     : null;
 };
 
@@ -25,6 +23,12 @@ const extractYearCalendar = (item) => {
   return extract ? +extract[0].replace(/[^\d]+/, '') : null;
 };
 
+const extractBusinessName = (item) => {
+  const extract = item.match(/(?<=CNPJNome Empresarial\s+)\b[A-Z\s]+\b/);
+  return extract ? extract[0].trim().toUpperCase() : null;
+};
+
+
 const extractPdfYearlyData = async (pdfBuffer) => {
   const data = await pdf(pdfBuffer);
 
@@ -35,9 +39,9 @@ const extractPdfYearlyData = async (pdfBuffer) => {
     cpf: extractCpf(page),
     name: extractName(page),
     year_current: extractYearCurrent(page),
-    year_calendar: extractYearCalendar(page),
+    year_calendar: extractYearCalendar(page)
   });
-
+  
   return extractedData;
 };
 
