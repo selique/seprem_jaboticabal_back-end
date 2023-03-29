@@ -11,7 +11,7 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 50, // limit file size to 50MB
+    fileSize: 1024 * 1024 * 1000, // limit file size to 50MB
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype !== "application/pdf") {
@@ -24,6 +24,7 @@ const upload = multer({
 
 
 const app = express();
+app.use(express.json({ limit: '1000mb' }));
 
 // enable CORS
 app.use(cors());
