@@ -1,0 +1,13 @@
+version: "3"
+
+# The name of the cluster. This is mainly used to prevent machines in
+
+services:
+  app:
+    image: app
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    command: npm start
