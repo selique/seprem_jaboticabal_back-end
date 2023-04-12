@@ -1,26 +1,27 @@
-# fly.toml file generated for seprem-be on 2023-04-12T09:46:24-03:00
+# fly.toml file generated for seprem-back-end on 2023-04-12T10:28:42-03:00
 
-app = "seprem-be"
+app = "seprem-back-end"
 kill_signal = "SIGINT"
 kill_timeout = 5
-mounts = []
 primary_region = "gru"
-processes = []
+
+[env]
+  PORT = "8080"
 
 [[services]]
-  internal_port = 3000
-  processes = ["app"]
   protocol = "tcp"
+  internal_port = 8080
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
+    type = "connections"
     hard_limit = 25
     soft_limit = 20
-    type = "connections"
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
