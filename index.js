@@ -22,7 +22,10 @@ const upload = multer({
 
 const app = express();
 // enable CORS
-app.use(cors({ allowedHeaders: 'Content-Type' }));
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 app.post('/', upload.single("pdf"), async (req, res) => {
   const pdfData = req.file && req.file.buffer;
