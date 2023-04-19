@@ -21,6 +21,12 @@ primary_region = "gru"
   [[services.ports]]
     port = 443
     handlers = ["tls", "http"]
+
+  [[services.ports.http_options.response.headers]]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "POST"
+    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept"
+
   [services.concurrency]
     type = "connections"
     hard_limit = 25
