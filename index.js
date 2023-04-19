@@ -20,12 +20,14 @@ const upload = multer({
 
 const app = express();
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'POST');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+app.use(cors(
+  {
+    origin: "*",
+    methods: "POST",
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  }
+));
 
 app.post("/holerites", (req, res) => {
   upload(req, res, async (err) => {
