@@ -73,11 +73,17 @@ const extractMonth = (item) => {
     "novembro",
     "dezembro",
   ];
-
-  const regex = /Mensal([A-Za-z]+) de (\d{4})|(\w+)\s+de\s+(\d{4})Mensal|Mensal([A-Za-zç]+)(?:\s+de\s+)?(\d{4})/i;
+  const regex = /Mensal([A-Za-z]+) de (\d{4})|(\w+)\s+de\s+(\d{4})Mensal|Mensal([A-Za-zç]+)(?:\s+de\s+)?(\d{4})|(?:\d{2}\/\d{2}\/\d{4}Mensal)?([A-Za-zç]+)\s+de\s+(\d{4})/i;
   const match = item.match(regex);
   if (!match) return null;
-  const monthName = match[1] || match[3] || match[5];
+  let monthName = null;
+  for (let i = 1; i < match.length; i++) {
+    const elem = match[i];
+    if (elem && /^[A-Za-zç]+$/.test(elem)) {
+      monthName = elem;
+      break;
+    }
+  }
   const monthIndex = monthName ? months.findIndex(
     (m) => m.toLowerCase() === monthName.toLowerCase()
   ) : -1;
@@ -97,7 +103,8 @@ const extractPdfData = async (pdfBuffer) => {
     month: extractMonth(page),
     year: extractYear(page),
   });
-
+  
+  console.log(extractedData)
   return extractedData;
 };
 
