@@ -74,13 +74,13 @@ const extractMonth = (item) => {
     "dezembro",
   ];
 
-  const regex = /Mensal([A-Za-z]+) de (\d{4})|(\w+)\s+de\s+(\d{4})Mensal/i;
+  const regex = /Mensal([A-Za-z]+) de (\d{4})|(\w+)\s+de\s+(\d{4})Mensal|Mensal([A-Za-zç]+)(?:\s+de\s+)?(\d{4})/i;
   const match = item.match(regex);
   if (!match) return null;
-  const monthName = match[1] || match[3];
-  const monthIndex = months.findIndex(
+  const monthName = match[1] || match[3] || match[5];
+  const monthIndex = monthName ? months.findIndex(
     (m) => m.toLowerCase() === monthName.toLowerCase()
-  );
+  ) : -1;
   return monthIndex !== -1 ? monthIndex + 1 : null;
 };
 
