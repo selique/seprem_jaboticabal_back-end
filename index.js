@@ -116,29 +116,30 @@ app.post("/declaracao-anual", (req, res) => {
     res.set("Content-Type", "application/pdf");
 
     const pdfData = req.file && req.file.buffer;
-
     const pdfDoc = await PDFDocument.load(pdfData);
     const pageBuffers = [];
-
+    
     try {
-      await Promise.all(
-        pdfDoc.getPages().map(async (_, index) => {
-          const newDocument = await PDFDocument.create();
-          const [copiedPage] = await newDocument.copyPages(pdfDoc, [index]);
-          newDocument.addPage(copiedPage);
-          const pageBuffer = await newDocument.save();
-          pageBuffers.push(pageBuffer);
-        })
-      );
+      // merge 2 pages seuquencilay peer pdf
+      for (let i = 0; i < pdfDoc.getPages().length; i += 2) {
+        const newDocument = await PDFDocument.create();
+        const copiedPage = await newDocument.copyPages(pdfDoc, [i, i + 1]);
+        const [page1, page2] = copiedPage;
+        newDocument.addPage(page1);
+        newDocument.insertPage(1, page2);
+        const pageBuffer = await newDocument.save();
+        pageBuffers.push(pageBuffer);
+      }
+
       const arrayResponseJson = [];
 
       for (const pageBuffer of pageBuffers) {
         try {
           const extractedData = await extractPdfYearlyData(pageBuffer);
-
+          
           if (extractedData[0]) {
-            const { cpf, name, year_current, year_calendar } = extractedData[0];
-            if (cpf && name && year_current && year_calendar) {
+            const { cpf, name, year_current } = extractedData[0];
+            if (cpf && name && year_current) {
               const pageFileName = `${cpf}-${name}-${year_current}.pdf`;
 
               const nameWithoutDash = name.replace(/-/g, " ");
@@ -153,6 +154,7 @@ app.post("/declaracao-anual", (req, res) => {
               };
               arrayResponseJson.push(pdfObject);
             } else {
+
               console.error("Invalid data extracted from PDF, Skipping...");
             }
           }
