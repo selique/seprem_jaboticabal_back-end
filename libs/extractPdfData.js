@@ -104,7 +104,6 @@ const extractPdfData = async (pdfBuffer) => {
     year: extractYear(page),
   });
   
-  console.log(extractedData)
   return extractedData;
 };
 
