@@ -90,17 +90,25 @@ const extractMonth = (item) => {
   return monthIndex !== -1 ? monthIndex + 1 : null;
 };
 
+const extract13 = (item) => {
+  const regex = /13º\s+Salário\s+Integral/;
+  const match = item.match(regex);
+  return match ? 13 : null;
+};
+
+
+
 const extractPdfData = async (pdfBuffer) => {
   const data = await pdf(pdfBuffer);
-
+  
   const page = data.text;
   const extractedData = [];
-
+ 
   extractedData.push({
     cpf: extractCpf(page),
     name: extractName(page),
     enrollment: extractEnrollment(page),
-    month: extractMonth(page),
+    month: extractMonth(page) !== null ? extractMonth(page) : extract13(page),
     year: extractYear(page),
   });
   
