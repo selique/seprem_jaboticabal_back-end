@@ -9,7 +9,7 @@ const extractName = (item) => {
   const extract = item.match(/(?<=CPFNome Completo\d{3}.\d{3}.\d{3}-\d{2}).*?(?=Natureza do Rendimento)/);
   
   return extract
-    ? extract[0].trim().toUpperCase()
+    ? extract[0].trim().toUpperCase().replace(/\s+/g, "-") 
     : null;
 };
 
