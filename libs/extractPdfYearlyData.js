@@ -38,8 +38,8 @@ const extractPdfYearlyData = async (pdfBuffer) => {
   extractedData.push({
     cpf: extractCpf(page),
     name: extractName(page),
-    year_current: extractYearCurrent(page),
-    year_calendar: extractYearCalendar(page)
+    year_current: extractYearCalendar(page),
+    year_calendar: extractYearCurrent(page)
   });
   
   return extractedData;
