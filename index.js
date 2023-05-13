@@ -46,15 +46,22 @@ app.post("/holerites", (req, res) => {
     const pageBuffers = [];
 
     try {
-      await Promise.all(
-        pdfDoc.getPages().map(async (_, index) => {
-          const newDocument = await PDFDocument.create();
-          const [copiedPage] = await newDocument.copyPages(pdfDoc, [index]);
-          newDocument.addPage(copiedPage);
-          const pageBuffer = await newDocument.save();
-          pageBuffers.push(pageBuffer);
-        })
-      );
+      const niPages = Number(req.query.numberPages);
+      for (let i = 0; i < pdfDoc.getPages().length; i += niPages) {
+        const newDocument = await PDFDocument.create();
+        const niPagesArray = Array.from({ length: niPages }, (_, index) => (i + index));
+        const copiedPages = await newDocument.copyPages(pdfDoc, niPagesArray);
+        copiedPages.map((page, index) =>  {
+          if(index === 0) {
+            newDocument.addPage(page);
+          } else {
+            newDocument.insertPage(index, page);
+          }
+        });
+        const pageBuffer = await newDocument.save();
+        pageBuffers.push(pageBuffer);
+      }
+
 
       const arrayResponseJson = [];
 
@@ -120,13 +127,18 @@ app.post("/declaracao-anual", (req, res) => {
     const pageBuffers = [];
     
     try {
-      // merge 2 pages seuquencilay peer pdf
-      for (let i = 0; i < pdfDoc.getPages().length; i += 2) {
+      const niPages = Number(req.query.numberPages);
+      for (let i = 0; i < pdfDoc.getPages().length; i += niPages) {
         const newDocument = await PDFDocument.create();
-        const copiedPage = await newDocument.copyPages(pdfDoc, [i, i + 1]);
-        const [page1, page2] = copiedPage;
-        newDocument.addPage(page1);
-        newDocument.insertPage(1, page2);
+        const niPagesArray = Array.from({ length: niPages }, (_, index) => (i + index));
+        const copiedPages = await newDocument.copyPages(pdfDoc, niPagesArray);
+        copiedPages.map((page, index) =>  {
+          if(index === 0) {
+            newDocument.addPage(page);
+          } else {
+            newDocument.insertPage(index, page);
+          }
+        });
         const pageBuffer = await newDocument.save();
         pageBuffers.push(pageBuffer);
       }
@@ -154,7 +166,6 @@ app.post("/declaracao-anual", (req, res) => {
               };
               arrayResponseJson.push(pdfObject);
             } else {
-
               console.error("Invalid data extracted from PDF, Skipping...");
             }
           }
