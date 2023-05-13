@@ -9,7 +9,7 @@ const extractName = (item) => {
   const extract = item.match(/(?<=CPFNome Completo\d{3}.\d{3}.\d{3}-\d{2}).*?(?=Natureza do Rendimento)/);
   
   return extract
-    ? extract[0].trim().toUpperCase()
+    ? extract[0].trim().toUpperCase().replace(/\s+/g, "-") 
     : null;
 };
 
@@ -38,8 +38,8 @@ const extractPdfYearlyData = async (pdfBuffer) => {
   extractedData.push({
     cpf: extractCpf(page),
     name: extractName(page),
-    year_current: extractYearCurrent(page),
-    year_calendar: extractYearCalendar(page)
+    year_current: extractYearCalendar(page),
+    year_calendar: extractYearCurrent(page)
   });
   
   return extractedData;
