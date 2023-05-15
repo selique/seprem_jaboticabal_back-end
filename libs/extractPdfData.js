@@ -96,19 +96,23 @@ const extract13 = (item) => {
   return match ? 13 : null;
 };
 
-
+const extract13Adiantamento = (item) => {
+  const regex = /13º\s+Adiantamento/;
+  const match = item.match(regex);
+  return match ? 14 : null;
+};
 
 const extractPdfData = async (pdfBuffer) => {
   const data = await pdf(pdfBuffer);
   
   const page = data.text;
   const extractedData = [];
- 
+  
   extractedData.push({
     cpf: extractCpf(page),
     name: extractName(page),
     enrollment: extractEnrollment(page),
-    month: extractMonth(page) !== null ? extractMonth(page) : extract13(page),
+    month:  extractMonth(page) || extract13(page) || extract13Adiantamento(page),
     year: extractYear(page),
   });
   
