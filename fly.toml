@@ -22,7 +22,7 @@ primary_region = "gru"
     port = 443
     handlers = ["tls", "http"]
 
-  [[services.ports.http_options.response.headers]]
+  [services.ports.http_options.response.headers]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "POST"
     Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept"
