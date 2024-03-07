@@ -20,14 +20,12 @@ const upload = multer({
 
 const app = express();
 
-app.use(cors(
-  {
-    origin: "*",
-    methods: "POST",
-    preflightContinue: false,
-    optionsSuccessStatus: 204
-  }
-));
+app.use(cors({
+  origin: "https://seprem-jaboticabal.vercel.app",
+  methods: "POST",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}));
 
 app.post("/holerites", (req, res) => {
   upload(req, res, async (err) => {
