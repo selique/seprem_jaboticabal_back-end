@@ -3,6 +3,23 @@ const app = require('./index');
 const validateFilenamePattern = require('./libs/validationFileName')
 jest.setTimeout(30000); // Increase timeout
 
+
+const sanitizeFilename = (name) => {
+  // Remove qualquer caractere que não seja uma letra, número ou hifen
+  return name.replace(/[^A-Z0-9\-]/gi, '');
+};
+
+const isValidFilename = (name) => {
+  const sanitizedFilename = sanitizeFilename(name);
+
+  // Expressão regular para validar o padrão esperado: CPF-nome-código-numero-ano
+  const filenamePattern = /^\d{3}\d{3}\d{3}\d{2}[A-Z\-]+-\d+-\d{4}$/i;
+
+  return filenamePattern.test(sanitizedFilename);
+};
+
+module.exports = { sanitizeFilename, isValidFilename };
+
 describe('Utils libs', () => {
 
   it('validateFilenamePattern', () => {
