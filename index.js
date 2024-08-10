@@ -65,7 +65,7 @@ app.post("/holerites", (req, res) => {
       for (const pageBuffer of pageBuffers) {
         try {
           const extractedData = await extractPdfData(pageBuffer);
-          console.log('Extracted Data:', extractedData);
+          // console.log('Extracted Data:', extractedData);
 
           if (extractedData[0]) {
             const { cpf, year, month, name, enrollment } = extractedData[0];
