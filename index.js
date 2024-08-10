@@ -1,6 +1,7 @@
 const express = require("express");
-const extractPdfData = require("./libs/extractPdfData");
+const extractPdfData = require('./libs/extractPdfData');
 const extractPdfYearlyData = require("./libs/extractPdfYearlyData");
+const validateFilenamePattern = require('./libs/validationFileName')
 const multer = require("multer");
 const { PDFDocument } = require("pdf-lib");
 const cors = require("cors");
@@ -33,15 +34,12 @@ app.post("/holerites", (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
       console.error(err);
-      return res
-        .status(400)
-        .send("Invalid file type. Only PDF files are allowed.");
+      return res.status(400).send("Invalid file type. Only PDF files are allowed.");
     }
 
     res.set("Content-Type", "application/pdf");
 
     const pdfData = req.file && req.file.buffer;
-
     const pdfDoc = await PDFDocument.load(pdfData);
     const pageBuffers = [];
 
@@ -51,8 +49,8 @@ app.post("/holerites", (req, res) => {
         const newDocument = await PDFDocument.create();
         const niPagesArray = Array.from({ length: niPages }, (_, index) => (i + index));
         const copiedPages = await newDocument.copyPages(pdfDoc, niPagesArray);
-        copiedPages.map((page, index) =>  {
-          if(index === 0) {
+        copiedPages.forEach((page, index) => {
+          if (index === 0) {
             newDocument.addPage(page);
           } else {
             newDocument.insertPage(index, page);
@@ -62,17 +60,19 @@ app.post("/holerites", (req, res) => {
         pageBuffers.push(pageBuffer);
       }
 
-
       const arrayResponseJson = [];
 
       for (const pageBuffer of pageBuffers) {
         try {
           const extractedData = await extractPdfData(pageBuffer);
+          console.log('Extracted Data:', extractedData);
 
           if (extractedData[0]) {
             const { cpf, year, month, name, enrollment } = extractedData[0];
-            if (cpf && name && enrollment) {
-              const pageFileName = `${cpf}-${name}-${enrollment}-${month}-${year}.pdf`;
+            console.log('Data for Filename:', { cpf, name, enrollment, month, year });
+
+            if (cpf && name && enrollment && validateFilenamePattern(`${cpf}-${name.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`)) {
+              const pageFileName = `${cpf}-${name.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`;
 
               const nameWithoutDash = name.replace(/-/g, " ");
               const pdfObject = {
@@ -88,25 +88,19 @@ app.post("/holerites", (req, res) => {
               };
               arrayResponseJson.push(pdfObject);
             } else {
-              console.error("Invalid data extracted from PDF, Skipping...");
+              console.error("Invalid filename pattern. Skipping...", `${cpf}-${name.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`);
             }
           }
         } catch (error) {
           console.error(`Error processing PDF: ${error}`);
-          return res
-            .writeHead(500, { "Content-Type": "text/plain" })
-            .end(`Error processing PDF: ${error}`);
+          return res.writeHead(500, { "Content-Type": "text/plain" }).end(`Error processing PDF: ${error}`);
         }
       }
 
-      res
-        .writeHead(200, { "Content-Type": "application/json" })
-        .end(JSON.stringify(arrayResponseJson));
+      res.writeHead(200, { "Content-Type": "application/json" }).end(JSON.stringify(arrayResponseJson));
     } catch (error) {
       console.error(`Error processing PDF: ${error}`);
-      res
-        .writeHead(500, { "Content-Type": "text/plain" })
-        .end("Error processing PDF");
+      res.writeHead(500, { "Content-Type": "text/plain" }).end("Error processing PDF");
     }
   });
 });
@@ -189,6 +183,10 @@ app.post("/declaracao-anual", (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 8080, () => {
-  console.log(`Server started on port ${process.env.PORT || 8080}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(process.env.PORT || 8080, () => {
+    console.log(`Server started on port ${process.env.PORT || 8080}`);
+  });
+}
+
+module.exports = app;

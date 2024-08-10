@@ -32,11 +32,11 @@ const extractName = (item) => {
 
     return name.replace(/\s+/g, "-");
   } else {
-    const regex1 = /Nome\s+(.+)\s+\d{3}\.\d{3}\.\d{3}\-\d{2}/;
+    const regex1 = /Nome\s+(.+?)\s+\d{3}\.\d{3}\.\d{3}\-\d{2}/;
     const match1 = item.match(regex1);
     const name1 = match1 ? match1[1] : "";
 
-    const regex2 = /Nome\s+(.+)\s+\d{2}\/\d{2}\/\d{4}/;
+    const regex2 = /Nome\s+(.+?)\s+\d{2}\/\d{2}\/\d{4}/;
     const match2 = item.match(regex2);
     const name2 = match2 ? match2[1] : "";
 
@@ -112,7 +112,7 @@ const extractPdfData = async (pdfBuffer) => {
     cpf: extractCpf(page),
     name: extractName(page),
     enrollment: extractEnrollment(page),
-    month:  extractMonth(page) || extract13(page) || extract13Adiantamento(page),
+    month: extractMonth(page) || extract13(page) || extract13Adiantamento(page),
     year: extractYear(page),
   });
   
