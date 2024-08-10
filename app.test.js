@@ -5,9 +5,12 @@ jest.setTimeout(30000); // Increase timeout
 
 describe('Utils libs', () => {
 
-  it('validateFilenamePattern ', () => { 
+  it('validateFilenamePattern', () => {
+    // Teste para um nome de arquivo válido
     expect(validateFilenamePattern('035.169.068-98-ADELAIDE-DA-SILVA-DEL-VECHIO-25519-1-2020.pdf')).toBe(true);
-    
+
+    // Teste para um nome de arquivo inválido
+    expect(validateFilenamePattern('invalid-filename.pdf')).toBe(false);
   });
 
 });

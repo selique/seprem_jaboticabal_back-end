@@ -12,5 +12,4 @@ const validateFilenamePattern = (filename) => {
 
     return true;
 };
-
-module.exports = validateFilenamePattern;
+module.exports = validateFilenamePattern
