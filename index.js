@@ -69,7 +69,7 @@ app.post("/holerites", (req, res) => {
 
           if (extractedData[0]) {
             const { cpf, year, month, name, enrollment } = extractedData[0];
-            const sanitizedFilename = filename.replace(/[^A-Z0-9\-\.]/gi, '');
+            const sanitizedFilename = name.replace(/[^A-Z0-9\-\.]/gi, '');
             if (cpf && name && enrollment && validateFilenamePattern(`${cpf}-${sanitizedFilename.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`)) {
               const pageFileName = `${cpf}-${name.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`;
 

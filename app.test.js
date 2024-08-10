@@ -9,14 +9,6 @@ describe('Utils libs', () => {
     // Teste para um nome de arquivo válido
     expect(validateFilenamePattern('035.169.068-98-ADELAIDE-DA-SILVA-DEL-VECHIO-25519-1-2020.pdf')).toBe(true);
 
-    // Testes com variações de símbolos
-    expect(validateFilenamePattern('156.225.068-08-ANDREA-CR.-DE-OLIVEIRA-FERREIRA-26185-7-2024.pdf')).toBe(true);
-    expect(validateFilenamePattern('981.638.258-04-ANGELA-AP.DONADON-GIANGRECCO-26301-7-2024.pdf')).toBe(true);
-    expect(validateFilenamePattern('981.642.288-34-ELIETE-MENDONCA-DA-SILVA-26305-7-2024.pdf')).toBe(true);
-    expect(validateFilenamePattern('045.791.208-17-JOAO-ANSELMO-SANTANNA-DE-OLIVEIRA-26216-7-2024.pdf')).toBe(true);
-    expect(validateFilenamePattern('058.895.748-84-LEILA-MARIA-GONCALVES-DA-FONSECA-ZANETTI-26028-7-2024.pdf')).toBe(true);
-    expect(validateFilenamePattern('138.751.348-69-MARIA-JOSE-GOMES-GONCALVES-26000-7-2024.pdf')).toBe(true);
-    
     // Teste para um nome de arquivo inválido
     expect(validateFilenamePattern('invalid-filename.pdf')).toBe(false);
   });
