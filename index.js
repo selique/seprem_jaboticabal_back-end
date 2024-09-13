@@ -5,6 +5,7 @@ const validateFilenamePattern = require('./libs/validationFileName')
 const multer = require("multer");
 const { PDFDocument } = require("pdf-lib");
 const cors = require("cors");
+const compressPdf = require('./libs/compressPdf');
 
 const storage = multer.memoryStorage();
 
@@ -65,13 +66,15 @@ app.post("/holerites", (req, res) => {
       for (const pageBuffer of pageBuffers) {
         try {
           const extractedData = await extractPdfData(pageBuffer);
-          // console.log('Extracted Data:', extractedData);
-
+          
           if (extractedData[0]) {
             const { cpf, year, month, name, enrollment } = extractedData[0];
             const sanitizedFilename = name.replace(/[^A-Z0-9\-]/gi, '');
             if (cpf && name && enrollment && validateFilenamePattern(`${cpf}-${sanitizedFilename.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`)) {
               const pageFileName = `${cpf}-${sanitizedFilename.replace(/\s+/g, '-')}-${enrollment}-${month}-${year}.pdf`;
+
+              // Compress the PDF here
+              const compressedPdfBase64 = await compressPdf(Buffer.from(pageBuffer).toString('base64'));
 
               const nameWithoutDash = name.replace(/-/g, " ");
               const pdfObject = {
@@ -82,7 +85,7 @@ app.post("/holerites", (req, res) => {
                 month,
                 pdf: {
                   fileName: pageFileName,
-                  file: Buffer.from(pageBuffer).toString("base64"),
+                  file: compressedPdfBase64, // Store compressed PDF
                 },
               };
               arrayResponseJson.push(pdfObject);
@@ -103,7 +106,6 @@ app.post("/holerites", (req, res) => {
     }
   });
 });
-
 app.post("/declaracao-anual", (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -147,6 +149,9 @@ app.post("/declaracao-anual", (req, res) => {
             if (cpf && name && year_current) {
               const pageFileName = `${cpf}-${name}-${year_current}.pdf`;
 
+              // Compress the PDF here
+              const compressedPdfBase64 = await compressPdf(Buffer.from(pageBuffer).toString('base64'));
+
               const nameWithoutDash = name.replace(/-/g, " ");
               const pdfObject = {
                 cpf,
@@ -154,7 +159,7 @@ app.post("/declaracao-anual", (req, res) => {
                 year: year_current,
                 pdf: {
                   fileName: pageFileName,
-                  file: Buffer.from(pageBuffer).toString("base64"),
+                  file: compressedPdfBase64 // Store compressed PDF,
                 },
               };
               arrayResponseJson.push(pdfObject);
